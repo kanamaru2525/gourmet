@@ -1,3 +1,4 @@
+import { Select, Button, Input,Option, Flex,Spacer, Text,Link} from "@yamada-ui/react";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
@@ -32,11 +33,10 @@ const SearchArea: React.FC = () => {
     setSearchText(e.target.value);
   };
 
-  // 範囲選択の変更をハンドリング
-  const handleRangeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setRange(e.target.value);
-  };
-
+ // 範囲選択の変更をハンドリング 
+ const handleRangeChange =(value: string) => { 
+  setRange(value);  // 直接値を設定 
+}; 
   // 検索ボタンがクリックされたときの処理
   const handleSearch = () => {
     let query = "";
@@ -54,27 +54,44 @@ const SearchArea: React.FC = () => {
 
   return (
     <div>
-      <p>緯度: {latitude}</p>
-      <p>経度: {longitude}</p>
-      <br />
-      <label htmlFor="range">範囲（1～5）:</label>
-      <select id="range" value={range} onChange={handleRangeChange}>
-        <option value="1">半径300m</option>
-        <option value="2">半径500m</option>
-        <option value="3">半径1000m</option>
-        <option value="4">半径2000m</option>
-        <option value="5">半径3000m</option>
-      </select>
-      <input
-        type="text"
-        value={searchText}
-        onChange={handleSearchInput}
-        placeholder="キーワード"
-      />
-      <button type="button" onClick={handleSearch}>
-        検索する
-      </button>
-    </div>
+      <Flex position="fixed" 
+            top="0" 
+            left="0"
+            zIndex="10" 
+            
+            p={4} 
+            align="center" 
+            justify="space-between" 
+            bg="white"
+            w="100vw"
+      >
+        <Button as="a" href="/"  color="black" fontSize="xl" textAlign="center" variant="unstyled" >
+          現在地からお店を調べるよサービス
+        </Button>
+      <Spacer />
+        <Input 
+          type="text" 
+          value={searchText} 
+          onChange={handleSearchInput} 
+          placeholder="キーワード" 
+          bg="white"
+          htmlSize="md" 
+          width="md"
+          />
+       
+          <Select id="range" value={range} onChange={handleRangeChange} bg="white" width="xxs"> 
+          <Option value="1">300m</Option> 
+          <Option value="2">500m</Option> 
+          <Option value="3">1000m</Option> 
+          <Option value="4">2000m</Option> 
+          <Option value="5">3000m</Option> 
+        </Select> 
+        <Button type="button" onClick={handleSearch} bg="primary" color="white"> 
+          検索する 
+        </Button> 
+
+      </Flex>
+          </div>
   );
 };
 
