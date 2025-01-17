@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { NextApiRequest,NextApiResponse } from "next";
 
-export const SHOW_NUM = 10;
+export const SHOW_NUM = 12;
 
 export default async function handler(
     req:NextApiRequest,
@@ -25,7 +25,7 @@ export default async function handler(
     let API_Num = "&start=1";
       if (req.query.startNum) {
         const resNum: any = req.query.startNum;
-        const num = resNum * 10 - 9;
+        const num = resNum * 12 - 11;
         API_Num = `&start=${num}`;
       }
     /**
