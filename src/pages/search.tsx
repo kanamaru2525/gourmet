@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader, useDisclosure } from "@yamada-ui/react";
+import { Button, Heading, Modal, ModalBody, ModalFooter, ModalHeader, useDisclosure, Wrap,Text, Card, CardBody, CardFooter, CardHeader, Flex, Center, isDisabled } from "@yamada-ui/react";
 
 export default function Search() {
   const [shopData, setShopData] = useState([]); // ショップリスト
@@ -32,7 +32,7 @@ export default function Search() {
         },
       });
       setShopData(res.data.shop); // 取得したデータをセット
-      setTotalPages(Math.ceil(res.data.results_available / 10));
+      setTotalPages(Math.ceil(res.data.results_available / 12));
     } catch (err) {
       console.log(err);
     }
@@ -61,46 +61,76 @@ export default function Search() {
   return (
     <div>
       <SearchArea />
+
+      <Center  bgColor="primary">
       {shopData.length > 0 ? (
-        <ul>
+        <Wrap  gap="xl" margin="xl" padding="xl" >
           {shopData.map((shop: any) => (
-            <li key={shop.id}>
-              <h3>
-                <strong>{shop.name}</strong>
-              </h3>
-              <p>{shop.genre.name}</p>
-              <p>{shop.access}</p>
-              {shop.photo.pc.l ? (
-                <Image src={shop.photo.pc.l} alt={shop.shopName} width={200} height={200} />
-              ) : (
-                <Image src="file.svg" alt="NO_IMAGE" width={200} height={200} />
-              )}
-              <Button onClick={() => handleOpenModal(shop)}>Open Modal</Button>
-            </li>
+            <Card key={shop.id} maxW="md" minW="md" mb="4" bgColor="white">
+              <CardHeader display="flex" justifyContent="center" height="350px" padding="0" overflow="hidden" >
+                {shop.photo.pc.l ? (
+                  <Image
+                    src={shop.photo.pc.l}
+                    alt={shop.shopName}
+                    width={300} 
+                    height={300} 
+                    objectFit="cover"
+
+                  />
+                ) : (
+                  <Image
+                    src="no-image.jpg"
+                    alt="NO_IMAGE"
+                    width={300} // 幅を数値で指定
+                    height={300} // 高さも数値で指定
+                    objectFit="fill"
+                  />
+                )}
+              </CardHeader>
+
+              <CardBody>
+                <Heading size="md" mb="2">
+                  <strong>{shop.name}</strong>
+                </Heading>
+                <Text mb="2">{shop.genre.name}</Text>
+                <Text mb="2">{shop.access}</Text>
+              </CardBody>
+
+              <CardFooter>
+                <Button colorScheme="primary" onClick={() => handleOpenModal(shop)}>
+                  詳細
+                </Button>
+              </CardFooter>
+            </Card>
           ))}
-        </ul>
+        </Wrap>
       ) : (
-        <p>飲食店が見つかりませんでした。</p>
+        <Center h="90vh">
+          <Text>飲食店が見つかりませんでした。</Text>
+        </Center>
+        
       )}
-      {/* ページネーション */}
-      <div>
-        <button
+    </Center>
+  <Center>
+    {/* ページネーション */}
+        <Button
           type="button"
           disabled={currentPage === 1}
           onClick={() => handlePageChange(currentPage - 1)}
         >
-          前に戻る
-        </button>
-        <span>現在のページ: {currentPage}</span>
-        <button
+          ←
+        </Button>
+        <Text m="md">ページ: {currentPage}</Text>
+
+        <Button
           type="button"
           disabled={currentPage === totalPages}
           onClick={() => handlePageChange(currentPage + 1)}
         >
-          次へ進む
-        </button>
-      </div>
-
+          →
+        </Button>
+  </Center>
+    
       {/* モーダル */}
       <Modal isOpen={isOpen} onClose={onClose}  size="6xl">
         <ModalHeader>{selectedShop?.name || "ショップ情報"}</ModalHeader>
