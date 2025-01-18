@@ -103,7 +103,7 @@ const Search: React.FC = () => {
                       alt="NO_IMAGE"
                       width={300} // 幅を数値で指定
                       height={300} // 高さも数値で指定
-                      objectFit="fill"
+                      objectFit="cover"
                     />
                   )}
                 </CardHeader>
@@ -154,10 +154,10 @@ const Search: React.FC = () => {
       <Modal isOpen={isOpen} onClose={onClose} size="6xl">
         <ModalHeader>{selectedShop?.name || "ショップ情報"}</ModalHeader>
         <ModalBody>
-          {selectedShop ? (
+          {selectedShop && (
             <Grid templateColumns="repeat(2, 1fr)" gap="xs">
               <Center>
-                {selectedShop?.photo?.pc?.l ? (
+                {selectedShop.photo.pc.l ? (
                   <Image
                     src={selectedShop.photo.pc.l}
                     alt={selectedShop.name}
@@ -175,13 +175,13 @@ const Search: React.FC = () => {
               </Center>
               <Box>
                 <Text mb="1">
-                  <strong>ジャンル:</strong> {selectedShop.genre?.name}
+                  <strong>ジャンル:</strong> {selectedShop.genre.name}
                 </Text>
                 <Text mb="1">
                   <strong>住所:</strong> {selectedShop.address}
                 </Text>
                 <Text mb="1">
-                  <strong>予算:</strong> {selectedShop.budget?.name}
+                  <strong>予算:</strong> {selectedShop.budget.name}
                 </Text>
                 <Text mb="1">
                   <strong>定休日:</strong> {selectedShop.close}
@@ -191,9 +191,8 @@ const Search: React.FC = () => {
                 </Text>
               </Box>
             </Grid>
-          ) : (
-            <p>ショップの詳細情報がありません。</p>
           )}
+          {!selectedShop && <p>ショップの詳細情報がありません。</p>}
         </ModalBody>
         <ModalFooter>
           <Button variant="ghost" onClick={onClose}>
