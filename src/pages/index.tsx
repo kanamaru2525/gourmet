@@ -6,7 +6,7 @@ const Home: React.FC = () => {
   const router = useRouter(); 
  
   // キーワード、緯度、経度の状態管理 
-  const [searchText, setSearchText] = useState(router.query.keyword || ""); 
+  const [searchText, setSearchText] = useState<string>(Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword || ""); 
   const [latitude, setLatitude] = useState<string | null>(null); 
   const [longitude, setLongitude] = useState<string | null>(null); 
   const [range, setRange] = useState("3"); // 初期値を3に設定 
@@ -74,7 +74,7 @@ const Home: React.FC = () => {
           <Text fontSize="xl" textAlign="center" color="white">
             現在地からお店を調べるよサービス
           </Text>
-          <Text color="white" htmlFor="range">範囲(半径):</Text> 
+          <Text color="white">範囲(半径):</Text> 
           <Select id="range" value={range} onChange={handleRangeChange} bg="white"> 
           <Option value="1">300m</Option> 
           <Option value="2">500m</Option> 
