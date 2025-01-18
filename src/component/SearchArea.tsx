@@ -1,4 +1,4 @@
-import { Select, Button, Input,Option, Flex,Spacer, Text,Link} from "@yamada-ui/react";
+import { Select, Button, Input,Option, Flex,Spacer,} from "@yamada-ui/react";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
