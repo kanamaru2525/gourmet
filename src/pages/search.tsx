@@ -1,31 +1,32 @@
-import SearchArea from "@/component/SearchArea";
-import axios from "axios";
 import { useRouter } from "next/router";
+import { useEffect, useState, useCallback } from "react";
+import axios from "axios";
+import { Button, Center, Wrap, Text, Card, CardBody, CardFooter, CardHeader, Heading, Modal, ModalBody, ModalFooter, ModalHeader, Grid, Box } from "@yamada-ui/react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { Button, Heading, Modal, ModalBody, ModalFooter, ModalHeader, useDisclosure, Wrap,Text, Card, CardBody, CardFooter, CardHeader, Center, Grid ,Box} from "@yamada-ui/react";
+import SearchArea from "@/component/SearchArea";
+import { useDisclosure } from "@yamada-ui/react";
 
 type Shop = {
-  id: number;
+  id: string;
   name: string;
   genre: {
     name: string;
   };
-  access: string;
+  address: string;
+  budget: {
+    name: string;
+  };
+  close: string;
+  open: string;
   photo: {
     pc: {
-      l: string | null;
+      l: string;
     };
   };
-  address: string;
-  budget:{
-    name:string;
-  }
-  open: string;
-  close:string;
+  access: string;
 };
 
-export default function Search() {
+const Search: React.FC = () => {
   const [shopData, setShopData] = useState<Shop[]>([]); // ショップリスト
   const [selectedShop, setSelectedShop] = useState<Shop | null>(null); // 選択されたショップデータ
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function Search() {
   const keyword = query.keyword; // パラメータ キーワード
 
   // 初期ショップデータ取得関数
-  const firstGetShop = async () => {
+  const firstGetShop = useCallback(async () => {
     try {
       setShopData([]);
       const res = await axios.get<{ shop: Shop[], results_available: number }>("/api/ShopDate", {
@@ -56,11 +57,11 @@ export default function Search() {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [currentPage, range, lat, lng, keyword]);
 
   useEffect(() => {
     firstGetShop();
-  }, [router.query]);
+  }, [firstGetShop]);
 
   // ページリンクをクリックしたときにページを遷移
   const handlePageChange = (page: number) => {
@@ -82,60 +83,56 @@ export default function Search() {
     <div>
       <SearchArea />
 
-      <Center  bgColor="primary">
-      {shopData.length > 0 ? (
-        <Wrap  gap="xl" margin="xl" padding="xl" >
-          {shopData.map((shop: Shop) => (
-            <Card key={shop.id} maxW="md" minW="md" mb="4" bgColor="white">
-              <CardHeader display="flex" justifyContent="center" height="350px" padding="0" overflow="hidden" >
-                {shop.photo.pc.l ? (
-                  <Image
-                    src={shop.photo.pc.l}
-                    alt={shop.name}
-                    width={300} 
-                    height={300} 
-                    objectFit="cover"
+      <Center bgColor="primary">
+        {shopData.length > 0 ? (
+          <Wrap gap="xl" margin="xl" padding="xl">
+            {shopData.map((shop: Shop) => (
+              <Card key={shop.id} maxW="md" minW="md" mb="4" bgColor="white">
+                <CardHeader display="flex" justifyContent="center" height="350px" padding="0" overflow="hidden">
+                  {shop.photo.pc.l ? (
+                    <Image
+                      src={shop.photo.pc.l}
+                      alt={shop.name}
+                      width={300}
+                      height={300}
+                      objectFit="cover"
+                    />
+                  ) : (
+                    <Image
+                      src="noimage.jpg"
+                      alt="NO_IMAGE"
+                      width={300} // 幅を数値で指定
+                      height={300} // 高さも数値で指定
+                      objectFit="fill"
+                    />
+                  )}
+                </CardHeader>
 
-                  />
-                ) : (
-                  <Image
-                    src="noimage.jpg"
-                    alt="NO_IMAGE"
-                    width={300} // 幅を数値で指定
-                    height={300} // 高さも数値で指定
-                    objectFit="fill"
-                  />
-                )}
-              </CardHeader>
+                <CardBody>
+                  <Heading size="md" mb="2">
+                    <strong>{shop.name}</strong>
+                  </Heading>
+                  <Text mb="1"><strong>ジャンル:</strong> {shop.genre.name}</Text>
+                  <Text mb="-3"><strong>アクセス</strong></Text>
+                  <Text>{shop.access}</Text>
+                </CardBody>
 
-              <CardBody>
-                <Heading size="md" mb="2">
-                  <strong>{shop.name}</strong>
-                </Heading>
-                <Text mb="1"><strong>ジャンル:</strong> {shop.genre.name}</Text>
-
-                <Text mb="-3"><strong>アクセス</strong></Text>
-  
-                <Text>{shop.access}</Text>
-              </CardBody>
-
-              <CardFooter>
-                <Button colorScheme="primary" onClick={() => handleOpenModal(shop)}>
-                  詳細
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </Wrap>
-      ) : (
-        <Center h="90vh">
-          <Text>飲食店が見つかりませんでした。</Text>
-        </Center>
-        
-      )}
-    </Center>
-  <Center>
-    {/* ページネーション */}
+                <CardFooter>
+                  <Button colorScheme="primary" onClick={() => handleOpenModal(shop)}>
+                    詳細
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </Wrap>
+        ) : (
+          <Center h="90vh">
+            <Text>飲食店が見つかりませんでした。</Text>
+          </Center>
+        )}
+      </Center>
+      <Center>
+        {/* ページネーション */}
         <Button
           type="button"
           disabled={currentPage === 1}
@@ -144,7 +141,6 @@ export default function Search() {
           ←
         </Button>
         <Text m="md">ページ: {currentPage}</Text>
-
         <Button
           type="button"
           disabled={currentPage === totalPages}
@@ -152,36 +148,48 @@ export default function Search() {
         >
           →
         </Button>
-  </Center>
-    
+      </Center>
+
       {/* モーダル */}
-      <Modal isOpen={isOpen} onClose={onClose}  size="6xl">
+      <Modal isOpen={isOpen} onClose={onClose} size="6xl">
         <ModalHeader>{selectedShop?.name || "ショップ情報"}</ModalHeader>
         <ModalBody>
           {selectedShop ? (
             <Grid templateColumns="repeat(2, 1fr)" gap="xs">
               <Center>
-
-              {selectedShop.photo.pc.l ? (
-                <Image src={selectedShop.photo.pc.l} alt={selectedShop.name} width={300} height={300} />
-              ) : (
-                <Image
+                {selectedShop?.photo?.pc?.l ? (
+                  <Image
+                    src={selectedShop.photo.pc.l}
+                    alt={selectedShop.name}
+                    width={300}
+                    height={300}
+                  />
+                ) : (
+                  <Image
                     src="noimage.jpg"
                     alt="NO_IMAGE"
                     width={300} // 幅を数値で指定
                     height={300} // 高さも数値で指定
                   />
-              )}
+                )}
               </Center>
-            
               <Box>
-              <Text mb="1"><strong>ジャンル:</strong> {selectedShop.genre.name}</Text>
-              <Text mb="1"><strong>住所:</strong> {selectedShop.address}</Text>
-              <Text mb="1"><strong>予算:</strong> {selectedShop.budget.name}</Text>
-              <Text mb="1"><strong>定休日:</strong> {selectedShop.close}</Text>
-              <Text mb="1"><strong>営業時間:</strong> {selectedShop.open}</Text>
+                <Text mb="1">
+                  <strong>ジャンル:</strong> {selectedShop.genre?.name}
+                </Text>
+                <Text mb="1">
+                  <strong>住所:</strong> {selectedShop.address}
+                </Text>
+                <Text mb="1">
+                  <strong>予算:</strong> {selectedShop.budget?.name}
+                </Text>
+                <Text mb="1">
+                  <strong>定休日:</strong> {selectedShop.close}
+                </Text>
+                <Text mb="1">
+                  <strong>営業時間:</strong> {selectedShop.open}
+                </Text>
               </Box>
-              
             </Grid>
           ) : (
             <p>ショップの詳細情報がありません。</p>
@@ -195,4 +203,6 @@ export default function Search() {
       </Modal>
     </div>
   );
-}
+};
+
+export default Search;
