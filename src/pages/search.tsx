@@ -85,13 +85,13 @@ export default function Search() {
       <Center  bgColor="primary">
       {shopData.length > 0 ? (
         <Wrap  gap="xl" margin="xl" padding="xl" >
-          {shopData.map((shop: any) => (
+          {shopData.map((shop: Shop) => (
             <Card key={shop.id} maxW="md" minW="md" mb="4" bgColor="white">
               <CardHeader display="flex" justifyContent="center" height="350px" padding="0" overflow="hidden" >
                 {shop.photo.pc.l ? (
                   <Image
                     src={shop.photo.pc.l}
-                    alt={shop.shopName}
+                    alt={shop.name}
                     width={300} 
                     height={300} 
                     objectFit="cover"

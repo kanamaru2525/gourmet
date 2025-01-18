@@ -24,8 +24,8 @@ export default async function handler(
     //検索開始位置
     let API_Num = "&start=1";
       if (req.query.startNum) {
-        const resNum: any = req.query.startNum;
-        const num = resNum * 12 - 11;
+        const resNum: string | string[] = req.query.startNum;
+        const num = Number(resNum) * 12 - 11;
         API_Num = `&start=${num}`;
       }
     /**
