@@ -6,7 +6,7 @@ const SearchArea: React.FC = () => {
   const router = useRouter();
 
   // キーワード、緯度、経度の状態管理
-  const [searchText, setSearchText] = useState(router.query.keyword || "");
+  const [searchText, setSearchText] = useState<string>(Array.isArray(router.query.keyword) ? router.query.keyword[0] : router.query.keyword || ""); 
   const [latitude, setLatitude] = useState<string | null>(null);
   const [longitude, setLongitude] = useState<string | null>(null);
   const [range, setRange] = useState("3"); // 初期値を3に設定
@@ -75,7 +75,6 @@ const SearchArea: React.FC = () => {
           onChange={handleSearchInput} 
           placeholder="キーワード" 
           bg="white"
-          htmlSize="md" 
           width="md"
           />
        
