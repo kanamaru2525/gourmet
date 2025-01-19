@@ -84,7 +84,7 @@ const Search: React.FC = () => {
       <SearchArea />
 
       <Center bgColor="primary">
-        {shopData.length > 0 ? (
+      {Array.isArray(shopData) && shopData.length > 0 ? (
           <Wrap gap="xl" margin="xl" padding="xl">
             {shopData.map((shop: Shop) => (
               <Card key={shop.id} maxW="md" minW="md" mb="4" bgColor="white">
