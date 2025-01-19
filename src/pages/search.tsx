@@ -79,6 +79,10 @@ const Search: React.FC = () => {
     onOpen(); // モーダルを開く
   };
 
+  const tooltipProps: any = {
+    label: "label text",
+ }
+
   return (
     <div>
       <SearchArea />
@@ -151,7 +155,7 @@ const Search: React.FC = () => {
       </Center>
 
       {/* モーダル */}
-      <Modal isOpen={isOpen} onClose={onClose} size="6xl">
+      <Modal  {...tooltipProps} isOpen={isOpen} onClose={onClose} size="6xl">
         <ModalHeader>{selectedShop?.name || "ショップ情報"}</ModalHeader>
         <ModalBody>
           {selectedShop && (
